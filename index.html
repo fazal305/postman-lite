@@ -1,0 +1,389 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Postman Lite | Browser API Client</title>
+    <meta
+      name="description"
+      content="Postman Lite is a browser-based API client for sending, saving, organizing, and inspecting HTTP requests."
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="hero" aria-labelledby="app-title">
+        <span class="hero-badge">Browser API Client</span>
+        <h1 id="app-title">Postman Lite</h1>
+        <p>
+          Create, send, save, organize, and inspect API requests from a
+          lightweight frontend tool built with HTML, CSS, Bootstrap, jQuery, and
+          vanilla JavaScript.
+        </p>
+        <div class="hero-actions">
+          <button class="btn btn-primary" type="button" id="sendRequestBtn">
+            Send Request
+          </button>
+          <button class="btn btn-outline-info" type="button" id="loadSampleBtn">
+            Load Sample Request
+          </button>
+          <button class="btn btn-outline-light" type="button" id="clearBtn">
+            Clear
+          </button>
+        </div>
+      </section>
+
+      <div class="layout-grid">
+        <div>
+          <section
+            class="section-panel"
+            aria-labelledby="request-builder-title"
+          >
+            <div class="panel-heading">
+              <div>
+                <h2 id="request-builder-title">API Request Builder</h2>
+                <p>
+                  Choose a method, enter a URL, attach headers or query params,
+                  and send.
+                </p>
+              </div>
+            </div>
+
+            <div class="request-bar">
+              <div>
+                <label class="form-label" for="methodSelect">Method</label>
+                <select class="form-select" id="methodSelect">
+                  <option value="GET">GET</option>
+                  <option value="POST">POST</option>
+                  <option value="PUT">PUT</option>
+                  <option value="DELETE">DELETE</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="form-label" for="requestUrl">Request URL</label>
+                <input
+                  class="form-control"
+                  id="requestUrl"
+                  type="url"
+                  placeholder="https://jsonplaceholder.typicode.com/posts/1"
+                />
+              </div>
+
+              <div class="d-flex align-items-end">
+                <button
+                  class="btn btn-primary w-100"
+                  type="button"
+                  id="sendRequestBtnSecondary"
+                >
+                  Send
+                </button>
+              </div>
+            </div>
+
+            <div
+              class="mt-3 status-banner"
+              id="statusMessage"
+              role="status"
+              aria-live="polite"
+            >
+              Ready to send a request.
+            </div>
+          </section>
+
+          <section class="section-panel" aria-labelledby="headers-title">
+            <div class="panel-heading">
+              <div>
+                <h2 id="headers-title">Headers</h2>
+                <p>
+                  Add request headers such as Content-Type or Authorization.
+                </p>
+              </div>
+              <button
+                class="btn btn-outline-info"
+                type="button"
+                id="addHeaderBtn"
+              >
+                Add Header
+              </button>
+            </div>
+
+            <div
+              class="editor-list"
+              id="headersList"
+              aria-label="Header rows"
+            ></div>
+          </section>
+
+          <section class="section-panel" aria-labelledby="query-params-title">
+            <div class="panel-heading">
+              <div>
+                <h2 id="query-params-title">Query Parameters</h2>
+                <p>
+                  Add URL query parameters without manually editing the request
+                  URL.
+                </p>
+              </div>
+              <button
+                class="btn btn-outline-info"
+                type="button"
+                id="addQueryParamBtn"
+              >
+                Add Param
+              </button>
+            </div>
+
+            <div
+              class="editor-list"
+              id="queryParamsList"
+              aria-label="Query parameter rows"
+            ></div>
+          </section>
+
+          <section class="section-panel" aria-labelledby="json-body-title">
+            <div class="panel-heading">
+              <div>
+                <h2 id="json-body-title">JSON Body</h2>
+                <p>
+                  Use this for POST and PUT requests. Validate before sending.
+                </p>
+              </div>
+              <button
+                class="btn btn-outline-info"
+                type="button"
+                id="validateJsonBtn"
+              >
+                Validate JSON Body
+              </button>
+            </div>
+
+            <label class="form-label" for="requestBody">Request Body</label>
+            <textarea
+              class="form-control"
+              id="requestBody"
+              spellcheck="false"
+              placeholder='{
+  "title": "Postman Lite Test",
+  "body": "This is a sample API request body.",
+  "userId": 1
+}'
+            ></textarea>
+          </section>
+
+          <section class="section-panel" aria-labelledby="response-title">
+            <div class="panel-heading">
+              <div>
+                <h2 id="response-title">Response Viewer</h2>
+                <p>
+                  Inspect status, timing, size, content type, pretty JSON, and
+                  raw output.
+                </p>
+              </div>
+              <div class="card-actions mt-0">
+                <button
+                  class="btn btn-outline-light"
+                  type="button"
+                  id="copyResponseBtn"
+                >
+                  Copy Response
+                </button>
+                <button
+                  class="btn btn-outline-info"
+                  type="button"
+                  id="downloadResponseBtn"
+                >
+                  Download Response JSON
+                </button>
+              </div>
+            </div>
+
+            <div class="stats-grid mb-3" aria-label="Response statistics">
+              <div class="stat-pill">
+                <span>Status</span>
+                <strong id="responseStatus">-</strong>
+              </div>
+              <div class="stat-pill">
+                <span>Time</span>
+                <strong id="responseTime">-</strong>
+              </div>
+              <div class="stat-pill">
+                <span>Size</span>
+                <strong id="responseSize">-</strong>
+              </div>
+              <div class="stat-pill">
+                <span>Content Type</span>
+                <strong id="responseContentType">-</strong>
+              </div>
+            </div>
+
+            <ul
+              class="nav nav-pills response-tabs mb-3"
+              id="responseTabs"
+              role="tablist"
+            >
+              <li class="nav-item" role="presentation">
+                <button
+                  class="nav-link active"
+                  id="pretty-tab"
+                  data-bs-toggle="pill"
+                  data-bs-target="#prettyPanel"
+                  type="button"
+                  role="tab"
+                  aria-controls="prettyPanel"
+                  aria-selected="true"
+                >
+                  Pretty
+                </button>
+              </li>
+              <li class="nav-item" role="presentation">
+                <button
+                  class="nav-link"
+                  id="raw-tab"
+                  data-bs-toggle="pill"
+                  data-bs-target="#rawPanel"
+                  type="button"
+                  role="tab"
+                  aria-controls="rawPanel"
+                  aria-selected="false"
+                >
+                  Raw
+                </button>
+              </li>
+            </ul>
+
+            <div class="tab-content" id="responseTabContent">
+              <div
+                class="tab-pane fade show active"
+                id="prettyPanel"
+                role="tabpanel"
+                aria-labelledby="pretty-tab"
+                tabindex="0"
+              >
+                <pre class="response-viewer" id="prettyResponse">
+No response yet.</pre
+                >
+              </div>
+              <div
+                class="tab-pane fade"
+                id="rawPanel"
+                role="tabpanel"
+                aria-labelledby="raw-tab"
+                tabindex="0"
+              >
+                <pre class="response-viewer" id="rawResponse">
+No response yet.</pre
+                >
+              </div>
+            </div>
+          </section>
+
+          <section class="section-panel" aria-labelledby="export-title">
+            <div class="panel-heading">
+              <div>
+                <h2 id="export-title">Export</h2>
+                <p>
+                  Download saved collections or the latest response as portable
+                  JSON files.
+                </p>
+              </div>
+            </div>
+
+            <div class="export-panel">
+              <button class="btn btn-success" type="button" id="saveRequestBtn">
+                Save Request
+              </button>
+              <button
+                class="btn btn-warning"
+                type="button"
+                id="exportCollectionBtn"
+              >
+                Export Collection
+              </button>
+            </div>
+          </section>
+        </div>
+
+        <aside
+          class="sidebar-stack"
+          aria-label="Saved requests and collections"
+        >
+          <section class="section-panel" aria-labelledby="collections-title">
+            <div class="panel-heading">
+              <div>
+                <h2 id="collections-title">Collections</h2>
+                <p>Create groups for saved requests.</p>
+              </div>
+            </div>
+
+            <div class="collection-form">
+              <label class="visually-hidden" for="collectionName"
+                >Collection name</label
+              >
+              <input
+                class="form-control"
+                id="collectionName"
+                type="text"
+                placeholder="Collection name"
+              />
+              <button
+                class="btn btn-outline-info"
+                type="button"
+                id="createCollectionBtn"
+              >
+                Create
+              </button>
+            </div>
+
+            <div
+              class="collection-list"
+              id="collectionsList"
+              aria-label="Collections list"
+            >
+              <div class="empty-state">No collections yet.</div>
+            </div>
+          </section>
+
+          <section class="section-panel" aria-labelledby="saved-requests-title">
+            <div class="panel-heading">
+              <div>
+                <h2 id="saved-requests-title">Saved Requests</h2>
+                <p>Search, load, and delete saved API requests.</p>
+              </div>
+            </div>
+
+            <label class="form-label" for="searchSavedRequests"
+              >Search saved requests</label
+            >
+            <input
+              class="form-control search-input"
+              id="searchSavedRequests"
+              type="search"
+              placeholder="Search by name, method, URL, or collection"
+            />
+
+            <div
+              class="saved-list"
+              id="savedRequestsList"
+              aria-label="Saved requests list"
+            >
+              <div class="empty-state">No saved requests yet.</div>
+            </div>
+          </section>
+        </aside>
+      </div>
+
+      <p class="footer-note">
+        Postman Lite runs fully in the browser and stores saved requests in
+        localStorage.
+      </p>
+    </main>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>
